@@ -1,7 +1,12 @@
 package io.github.atimothee.codelab;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -10,9 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    CollapsingToolbarLayout ctb;
+    int mutedColor;
 
 
     @Override
@@ -33,7 +41,22 @@ public class MainActivity extends AppCompatActivity {
         // Add 8 cards
         MyAdapter adapter = new MyAdapter(new String[8]);
         recyclerView.setAdapter(adapter);
+        ctb = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+/* Define the image */
+        ImageView image = (ImageView) findViewById(R.id.image);
+/* Decode bitmap from the image */
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.bird);
+/* Generate palette from the image bitmap */
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                mutedColor = palette.getMutedColor(R.attr.colorPrimary);
+       				/* Set toolbar color from the palette */
+                ctb.setContentScrimColor(mutedColor);
+            }
+        });
     }
+    
 
     /* Create RecylcerView Adapter. */
     public static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
